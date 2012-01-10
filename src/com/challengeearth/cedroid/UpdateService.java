@@ -1,15 +1,9 @@
 package com.challengeearth.cedroid;
 
-import java.io.BufferedReader;
-import java.util.List;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-
-import com.challengeearth.cedroid.helpers.JSONParser;
-import com.challengeearth.cedroid.helpers.NetworkUtilities;
 
 /**
  * This class loads all available Challenges
@@ -23,6 +17,7 @@ public class UpdateService extends Service {
 	static final int UPDATE_DELAY = 60000;
 	boolean runflag;
 	private Updater updater;
+	private CeApplication application;
 	
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -34,6 +29,7 @@ public class UpdateService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		this.updater = new Updater();
+		this.application = (CeApplication) getApplication();
 		Log.d(TAG, "onCreate");
 	}
 
@@ -44,6 +40,8 @@ public class UpdateService extends Service {
 		this.runflag = false;
 		this.updater.interrupt();
 		this.updater = null;
+		this.application.setUpdaterRunning(false);
+		this.application = null;
 		
 		Log.d(TAG, "onDestroy");
 	}
@@ -52,12 +50,21 @@ public class UpdateService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand");
 		
-		this.runflag = true;
-		this.updater.start();
+		if(!runflag) {
+			this.runflag = true;
+			this.updater.start();
+			this.application.setUpdaterRunning(true);
+		}
 		
 		return START_STICKY;
 	}
 	
+	/**
+	 * This Updater is a backround Thread that loads periodically the new data from the server
+	 * 
+	 * @author Stefan Staub
+	 *
+	 */
 	private class Updater extends Thread {
 		public Updater() {
 			super("UpdaterService-UpdaterThread");
@@ -69,18 +76,8 @@ public class UpdateService extends Service {
 			while(updaterService.runflag) {
 				Log.d(TAG, "updater is running");
 				try {
-					// Do updates here
-					try {
-						BufferedReader reader = NetworkUtilities.getGETReader("challenge");
-						JSONParser<Challenge> challengeParser = new JSONParser<Challenge>(reader, Challenge.class);
-						List<Challenge> challenges = challengeParser.parseList();
-						for(Challenge c:challenges) {
-							Log.d(TAG, c.toString());
-						}
-					} catch (Exception e) {
-						Log.e(TAG, "Failed to read available challenges", e);
-					}
-					
+					CeApplication application = (CeApplication) updaterService.getApplication();
+					application.fetchAvailableChallenges();
 					Log.d(TAG, "update done");
 					Thread.sleep(UPDATE_DELAY);
 				} catch (InterruptedException e) {
