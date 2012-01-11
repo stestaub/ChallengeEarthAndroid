@@ -2,7 +2,6 @@ package com.challengeearth.cedroid;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 /**
@@ -18,12 +17,6 @@ public class UpdateService extends IntentService {
 	public UpdateService() {
 		super(TAG);
 		Log.d(TAG, "Service created");
-	}
-	
-	@Override
-	public IBinder onBind(Intent arg0) {
-		Log.d(TAG, "onBind");
-		return null;
 	}
 
 	@Override

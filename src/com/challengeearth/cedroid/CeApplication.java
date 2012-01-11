@@ -3,12 +3,13 @@ package com.challengeearth.cedroid;
 import java.io.BufferedReader;
 import java.util.List;
 
-import com.challengeearth.cedroid.helpers.JSONParser;
-import com.challengeearth.cedroid.helpers.NetworkUtilities;
-
 import android.app.Application;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.util.Log;
+
+import com.challengeearth.cedroid.helpers.JSONParser;
+import com.challengeearth.cedroid.helpers.NetworkUtilities;
 
 public class CeApplication extends Application {
 
@@ -64,6 +65,15 @@ public class CeApplication extends Application {
 			Log.e(TAG, "Failed to read available challenges", e);
 		}
 		return count;
+	}
+	
+	public void startChallenge(long id) {
+		Log.d(TAG, "Starting new tracking service");
+		startService(new Intent(this, TrackingService.class));
+	}
+	
+	public void stopChallenge(long id) {
+		stopService(new Intent(this, TrackingService.class));
 	}
 	
 }
