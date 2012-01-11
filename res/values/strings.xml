@@ -5,5 +5,7 @@
     <string name="app_name">Cedroid2</string>
     <string name="titleChallenges">Verfügbare Challenges</string>
     <string name="titleRefresh">Aktualisieren</string>
+    <string name="titleChallenge">Challenge</string>
+    <string name="labelProgress">Progress</string>
 
 </resources>

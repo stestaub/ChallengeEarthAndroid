@@ -2,25 +2,21 @@ package com.challengeearth.cedroid;
 
 import java.net.URL;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
-import com.challengeearth.cedroid.ChallengeData.DbHelper;
 import com.challengeearth.cedroid.helpers.AdapterImageLoader;
 
 /**
@@ -29,9 +25,8 @@ import com.challengeearth.cedroid.helpers.AdapterImageLoader;
  * @author Stefan Staub
  *
  */
-public class OverviewActivity extends Activity {
-    private DbHelper dbHelper;
-    private SQLiteDatabase db;
+public class OverviewActivity extends BaseActivity {
+	
     private ListView challengeList;
     private Cursor cursor;
     private SimpleCursorAdapter adapter;
@@ -93,10 +88,6 @@ public class OverviewActivity extends Activity {
 	    
 	    startService(new Intent(this, UpdateService.class));
 	    
-	    // Prepare Database
-	    this.dbHelper = new DbHelper(this);
-	    this.db = this.dbHelper.getReadableDatabase();
-	    
 	    // Prepare Listener for updates
 	    this.receiver = new ChallengeUpdatesReceiver();
 	    this.filter = new IntentFilter("com.challengeearth.NEW_CHALLENGES");
@@ -105,7 +96,6 @@ public class OverviewActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		this.db.close();
 	}
 
 	@Override
@@ -120,6 +110,14 @@ public class OverviewActivity extends Activity {
 		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
 		this.adapter.setViewBinder(VIEW_BINDER);
 		this.challengeList.setAdapter(this.adapter);
+		this.challengeList.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				startActivity(new Intent(OverviewActivity.this, DetailsActivity.class));
+			}
+			
+		});
 		
 		registerReceiver(receiver, filter);
 	}
@@ -129,31 +127,4 @@ public class OverviewActivity extends Activity {
 		super.onPause();
 		unregisterReceiver(receiver);
 	}
-	
-	
-	/// Menu handling --------------------------------------------------------------------------------------
-	
-	/**
-	 * Creating the menu
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		return true;
-	}
-	
-	/**
-	 * Handle menu item clicked event
-	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-		case R.id.itemRefresh:
-			startService(new Intent(this, UpdateService.class));
-			break;
-		}
-		return true;
-	}
-	
 }
