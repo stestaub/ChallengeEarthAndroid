@@ -24,7 +24,7 @@ public class ChallengeData {
 	public static final String C_PROGRESS = "progress";
 	public static final String C_IMAGE = "image_url";
 	
-	class DbHelper extends SQLiteOpenHelper {
+	static class DbHelper extends SQLiteOpenHelper {
 
 		public DbHelper(Context context) {
 			super(context, DATABASE, null, VERSION);
