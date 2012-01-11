@@ -17,12 +17,18 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 import com.challengeearth.cedroid.ChallengeData.DbHelper;
 import com.challengeearth.cedroid.helpers.AdapterImageLoader;
 
+/**
+ * This is the Activity that shows an overview over all Available challenges.
+ * 
+ * @author Stefan Staub
+ *
+ */
 public class OverviewActivity extends Activity {
-    DbHelper dbHelper;
-    SQLiteDatabase db;
-    ListView challengeList;
-    Cursor cursor;
-    SimpleCursorAdapter adapter;
+    private DbHelper dbHelper;
+    private SQLiteDatabase db;
+    private ListView challengeList;
+    private Cursor cursor;
+    private SimpleCursorAdapter adapter;
     
     private static final String TAG = "OverviewActivity";
     
@@ -36,30 +42,32 @@ public class OverviewActivity extends Activity {
         setContentView(R.layout.overview);
         startService(new Intent(this, UpdateService.class));
         
-        challengeList = (ListView) findViewById(R.id.listView1);
+        this.challengeList = (ListView) findViewById(R.id.listView1);
         
-        dbHelper = new DbHelper(this);
-        db = dbHelper.getReadableDatabase();
-        
+        this.dbHelper = new DbHelper(this);
+        this.db = this.dbHelper.getReadableDatabase();
        
     }
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		db.close();
+		this.db.close();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		cursor = db.query(ChallengeData.TABLE, null, null, null, null, null, null);
+		this.cursor = this.db.query(ChallengeData.TABLE, null, null, null, null, null, null);
 		startManagingCursor(cursor);
-		adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
-		adapter.setViewBinder(VIEW_BINDER);
-		challengeList.setAdapter(adapter);
+		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
+		this.adapter.setViewBinder(VIEW_BINDER);
+		this.challengeList.setAdapter(this.adapter);
 	}
     
+	/**
+	 * View Binder to load the images from the internet
+	 */
     static final ViewBinder VIEW_BINDER = new ViewBinder() {
 		
 		@Override
@@ -67,10 +75,9 @@ public class OverviewActivity extends Activity {
 			if(view.getId() != R.id.image) {
 				return false;
 			}
-			ImageView image = (ImageView)view;
 			AdapterImageLoader imageLoader = new AdapterImageLoader(null);
 			try {
-				imageLoader.addImage(new URL(cursor.getString(columnIndex)), image);
+				imageLoader.addImage(new URL(cursor.getString(columnIndex)), (ImageView)view);
 			}
 			catch (Exception e) {
 				Log.e(TAG, "could not load image", e);
