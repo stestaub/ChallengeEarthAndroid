@@ -4,5 +4,6 @@
     <string name="hello">Hello World, OverviewActivity!</string>
     <string name="app_name">Cedroid2</string>
     <string name="titleChallenges">Verfügbare Challenges</string>
+    <string name="titleRefresh">Aktualisieren</string>
 
 </resources>

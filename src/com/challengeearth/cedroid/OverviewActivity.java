@@ -11,6 +11,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -63,8 +66,13 @@ public class OverviewActivity extends Activity {
 		}
 	};
 	
+	/**
+	 * Broadcast Receiver receives broadcasts when new Challenges are available
+	 * and updates the list
+	 * 
+	 * @author Stefan Staub
+	 */
 	class ChallengeUpdatesReceiver extends BroadcastReceiver {
-
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			cursor.requery();
@@ -120,6 +128,32 @@ public class OverviewActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(receiver);
+	}
+	
+	
+	/// Menu handling --------------------------------------------------------------------------------------
+	
+	/**
+	 * Creating the menu
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
+	
+	/**
+	 * Handle menu item clicked event
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.itemRefresh:
+			startService(new Intent(this, UpdateService.class));
+			break;
+		}
+		return true;
 	}
 	
 }
