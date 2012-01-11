@@ -3,7 +3,10 @@ package com.challengeearth.cedroid;
 import java.net.URL;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -30,42 +33,16 @@ public class OverviewActivity extends Activity {
     private Cursor cursor;
     private SimpleCursorAdapter adapter;
     
+    // Challenge Updates
+    private ChallengeUpdatesReceiver receiver;
+    private IntentFilter filter;
+    
     private static final String TAG = "OverviewActivity";
     
     static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_DESC, ChallengeData.C_IMAGE};
     static final int[] MAP_TO = {R.id.title, R.id.description, R.id.image};
 	
-	/** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.overview);
-        startService(new Intent(this, UpdateService.class));
-        
-        this.challengeList = (ListView) findViewById(R.id.listView1);
-        
-        this.dbHelper = new DbHelper(this);
-        this.db = this.dbHelper.getReadableDatabase();
-       
-    }
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		this.db.close();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		this.cursor = this.db.query(ChallengeData.TABLE, null, null, null, null, null, null);
-		startManagingCursor(cursor);
-		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
-		this.adapter.setViewBinder(VIEW_BINDER);
-		this.challengeList.setAdapter(this.adapter);
-	}
-    
-	/**
+    /**
 	 * View Binder to load the images from the internet
 	 */
     static final ViewBinder VIEW_BINDER = new ViewBinder() {
@@ -85,4 +62,64 @@ public class OverviewActivity extends Activity {
 			return true;
 		}
 	};
+	
+	class ChallengeUpdatesReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			cursor.requery();
+			adapter.notifyDataSetChanged();
+			Log.d(TAG, "ChallengeUpdate Received");
+		}
+		
+	}
+    
+	/** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    
+	    // Prepare Layout
+	    setContentView(R.layout.overview);
+	    this.challengeList = (ListView) findViewById(R.id.listView1);
+	    
+	    startService(new Intent(this, UpdateService.class));
+	    
+	    // Prepare Database
+	    this.dbHelper = new DbHelper(this);
+	    this.db = this.dbHelper.getReadableDatabase();
+	    
+	    // Prepare Listener for updates
+	    this.receiver = new ChallengeUpdatesReceiver();
+	    this.filter = new IntentFilter("com.challengeearth.NEW_CHALLENGES");
+    }
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		this.db.close();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// prepare the data
+		this.cursor = this.db.query(ChallengeData.TABLE, null, null, null, null, null, null);
+		startManagingCursor(cursor);
+		
+		// set the adapter
+		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
+		this.adapter.setViewBinder(VIEW_BINDER);
+		this.challengeList.setAdapter(this.adapter);
+		
+		registerReceiver(receiver, filter);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(receiver);
+	}
+	
 }

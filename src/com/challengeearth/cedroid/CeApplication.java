@@ -36,13 +36,15 @@ public class CeApplication extends Application {
 		this.updaterRunning = updaterRunning;
 	}
 	
-	public synchronized void fetchAvailableChallenges() {
+	public synchronized int fetchAvailableChallenges() {
+		int count = 0;
 		try {
 			BufferedReader reader = NetworkUtilities.getGETReader("challenge");
 			JSONParser<Challenge> challengeParser = new JSONParser<Challenge>(reader, Challenge.class);
 			List<Challenge> challenges = challengeParser.parseList();
 			
 			ContentValues values = new ContentValues();
+			
 			for(Challenge c:challenges) {
 				values.put(ChallengeData.C_ID, c.getId());
 				values.put(ChallengeData.C_TITLE, c.getTitle());
@@ -50,11 +52,14 @@ public class CeApplication extends Application {
 				values.put(ChallengeData.C_IMAGE, c.getImageUrl());
 				values.put(ChallengeData.C_LATITUDE, c.getLatitude());
 				values.put(ChallengeData.C_LONGITUDE, c.getLongitude());
-				challengeData.insertOrIgnore(values);
+				
+				count = challengeData.insertOrIgnore(values)?count+1:count;
 			}
+			
 		} catch (Exception e) {
 			Log.e(TAG, "Failed to read available challenges", e);
 		}
+		return count;
 	}
 	
 }

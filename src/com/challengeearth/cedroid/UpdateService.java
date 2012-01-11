@@ -13,6 +13,7 @@ import android.util.Log;
 public class UpdateService extends Service {
 	
 	private static final String TAG = "UpdaterService";
+	private static final String NEW_CHALLENGES = "com.challengeearth.NEW_CHALLENGES";
 	
 	static final int UPDATE_DELAY = 60000;
 	boolean runflag;
@@ -66,6 +67,8 @@ public class UpdateService extends Service {
 	 *
 	 */
 	private class Updater extends Thread {
+		Intent intent;
+		
 		public Updater() {
 			super("UpdaterService-UpdaterThread");
 		}
@@ -77,7 +80,11 @@ public class UpdateService extends Service {
 				Log.d(TAG, "updater is running");
 				try {
 					CeApplication application = (CeApplication) updaterService.getApplication();
-					application.fetchAvailableChallenges();
+					int updates = application.fetchAvailableChallenges();
+					if(updates >0) {
+						intent = new Intent(NEW_CHALLENGES);
+						updaterService.sendBroadcast(intent);
+					}
 					Log.d(TAG, "update done");
 					Thread.sleep(UPDATE_DELAY);
 				} catch (InterruptedException e) {

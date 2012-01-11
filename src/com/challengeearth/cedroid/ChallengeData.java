@@ -61,17 +61,20 @@ public class ChallengeData {
 		this.dbHelper.close();
 	}
 	
-	public void insertOrIgnore(ContentValues values) {
+	
+	public boolean insertOrIgnore(ContentValues values) {
 		Log.d(TAG, "insertOrIgnre on " + values);
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-		
+		boolean inserted = false;
 		try {
 			db.insertOrThrow(TABLE, null, values);
+			inserted = true;
 		} catch(Exception e) {
 			Log.w(TAG, "could not insert data in db: ", e);
 		} finally {
 			db.close();
 		}
+		return inserted;
 	}
 	
 	public Cursor getAvailableChallenges() {
