@@ -17,37 +17,31 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content" android:background="#88000000">
 
         <ImageView
             android:id="@+id/detailImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_margin="10dp"
             android:src="@android:drawable/ic_menu_gallery" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/challengeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge" android:layout_marginBottom="10dp" android:layout_marginTop="10dp"/>
-
-            <TextView
-                android:id="@+id/challengeDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/challengeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/challengeDescription"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="TextView" android:layout_weight="1" android:layout_margin="10dp"/>
 
     <TextView
         android:id="@+id/textView1"
