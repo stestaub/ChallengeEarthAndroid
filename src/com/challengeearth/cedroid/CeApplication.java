@@ -27,6 +27,10 @@ public class CeApplication extends Application {
 		return updaterRunning;
 	}
 	
+	public ChallengeData getChallengeData() {
+		return this.challengeData;
+	}
+	
 	/**
 	 * This only sets the status of the updater and does not affect the service itself
 	 * 

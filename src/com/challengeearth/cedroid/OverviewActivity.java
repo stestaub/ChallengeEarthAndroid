@@ -94,16 +94,11 @@ public class OverviewActivity extends BaseActivity {
     }
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 		
 		// prepare the data
-		this.cursor = this.db.query(ChallengeData.TABLE, null, null, null, null, null, null);
+		this.cursor = challengeData.getAvailableChallenges();
 		startManagingCursor(cursor);
 		
 		// set the adapter
@@ -113,8 +108,12 @@ public class OverviewActivity extends BaseActivity {
 		this.challengeList.setOnItemClickListener(new OnItemClickListener() {
 			
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				startActivity(new Intent(OverviewActivity.this, DetailsActivity.class));
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				cursor.moveToPosition(position);
+				long c_id = cursor.getInt(cursor.getColumnIndex(ChallengeData.C_ID));
+				Intent intent = new Intent(OverviewActivity.this, DetailsActivity.class);
+				intent.putExtra(ChallengeData.C_ID, c_id);
+				startActivity(intent);
 			}
 			
 		});

@@ -81,4 +81,10 @@ public class ChallengeData {
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
 		return db.query(TABLE, null, null, null, null, null, null);
 	}
+	
+	public Cursor getChallengeById(long id) {
+		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+		String[] selectArgs = {Long.toString(id)};
+		return db.query(TABLE, null, C_ID + " = ?", selectArgs, null, null, null);
+	}
 }

@@ -14,19 +14,22 @@ public class BaseActivity extends Activity {
 	
 	protected DbHelper dbHelper;
 	protected SQLiteDatabase db;
+	protected CeApplication application;
+	protected ChallengeData challengeData;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Prepare Database
 	    this.dbHelper = new DbHelper(this);
-	    this.db = this.dbHelper.getReadableDatabase();
+	    this.application = (CeApplication) getApplication();
+	    this.challengeData = application.getChallengeData();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		this.db.close();
+		this.challengeData.close();
 	}
 
 	/// Menu handling --------------------------------------------------------------------------------------
