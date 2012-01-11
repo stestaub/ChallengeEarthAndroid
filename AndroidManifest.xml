@@ -25,6 +25,11 @@
             </intent-filter>
         </activity>
         <service android:name="com.challengeearth.cedroid.UpdateService"></service>
+        <receiver android:name=".NetworkReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
