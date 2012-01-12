@@ -15,6 +15,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	
 	private Cursor cursor;
 	private long challengeId;
+	private boolean challengeActive;
+	
 	TextView title;
 	TextView description;
 	ProgressBar progress;
@@ -40,23 +42,46 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		this.challengeId = getIntent().getExtras().getLong(ChallengeData.C_ID);
         this.cursor = challengeData.getChallengeById(this.challengeId);
         this.cursor.moveToFirst();
-        startManagingCursor(cursor);
         
         // Set contents
+        challengeActive = this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_ACTIVE))>0;
         title.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_TITLE)));
         description.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_DESC)));
         progress.setProgress(this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
         
         button.setOnClickListener(this);
+        setButtonState();
 
 	}
 
 	@Override
 	public void onClick(View v) {
 		Log.d(TAG, "button clicked");
-		application.startChallenge(challengeId);
+		if(challengeActive) {
+			application.stopChallenge(challengeId);
+			challengeActive = false;
+		} else {
+			application.startChallenge(challengeId);
+			challengeActive = true;
+		}
+		setButtonState();
 	}
 
+	private void setButtonState() {
+		if(challengeActive) {
+        	button.setImageResource(android.R.drawable.ic_media_pause);
+        }
+        else {
+        	button.setImageResource(android.R.drawable.ic_media_play);
+        }
+		button.refreshDrawableState();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		cursor.close();
+	}
 	
 	
 }

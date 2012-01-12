@@ -41,6 +41,12 @@ public class CeApplication extends Application {
 		this.updaterRunning = updaterRunning;
 	}
 	
+	/**
+	 * Fetches the challenges from ChallengeEarth. Use this in a seperate thread.
+	 * 
+	 * @return
+	 * 		The number of challenges that are fetched.
+	 */
 	public synchronized int fetchAvailableChallenges() {
 		int count = 0;
 		try {
@@ -57,7 +63,6 @@ public class CeApplication extends Application {
 				values.put(ChallengeData.C_IMAGE, c.getImageUrl());
 				values.put(ChallengeData.C_LATITUDE, c.getLatitude());
 				values.put(ChallengeData.C_LONGITUDE, c.getLongitude());
-				
 				count = challengeData.insertOrIgnore(values)?count+1:count;
 			}
 			
@@ -67,12 +72,27 @@ public class CeApplication extends Application {
 		return count;
 	}
 	
+	/**
+	 * Starts the challenge with the given id;
+	 * 
+	 * @param id
+	 * 		The id of the challenge for that tracking will be started
+	 */
 	public void startChallenge(long id) {
-		Log.d(TAG, "Starting new tracking service");
+		Log.d(TAG, "Start tracking for challenge: " + id);
+		challengeData.setChallengeStatus(id, true);
 		startService(new Intent(this, TrackingService.class));
 	}
 	
+	/**
+	 * Stops the challenge with the given id;
+	 * 
+	 * @param id
+	 * 		The id of the challenge for that tracking will be stoped
+	 */
 	public void stopChallenge(long id) {
+		Log.d(TAG, "Stop tracking for challenge: " + id);
+		challengeData.setChallengeStatus(id, false);
 		stopService(new Intent(this, TrackingService.class));
 	}
 	

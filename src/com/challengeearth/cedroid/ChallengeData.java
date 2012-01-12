@@ -87,4 +87,17 @@ public class ChallengeData {
 		String[] selectArgs = {Long.toString(id)};
 		return db.query(TABLE, null, C_ID + " = ?", selectArgs, null, null, null);
 	}
+	
+	public void updateChallenge(long id, ContentValues values) {
+		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+		String[] selectArgs = {Long.toString(id)};
+		db.update(TABLE, values, C_ID + " = ?", selectArgs);
+		db.close();
+	}
+	
+	public void setChallengeStatus(long id, boolean status) {
+		ContentValues values = new ContentValues(1);
+		values.put(ChallengeData.C_ACTIVE, status);
+		updateChallenge(id, values);
+	}
 }
