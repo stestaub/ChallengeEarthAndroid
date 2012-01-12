@@ -1,4 +1,6 @@
-package com.challengeearth.cedroid;
+package com.challengeearth.cedroid.services;
+
+import com.challengeearth.cedroid.CeApplication;
 
 import android.app.IntentService;
 import android.content.Intent;

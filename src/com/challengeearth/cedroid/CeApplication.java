@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.challengeearth.cedroid.helpers.JSONParser;
 import com.challengeearth.cedroid.helpers.NetworkUtilities;
+import com.challengeearth.cedroid.model.Challenge;
+import com.challengeearth.cedroid.services.TrackingService;
 
 public class CeApplication extends Application {
 
@@ -93,7 +95,10 @@ public class CeApplication extends Application {
 	public void stopChallenge(long id) {
 		Log.d(TAG, "Stop tracking for challenge: " + id);
 		challengeData.setChallengeStatus(id, false);
-		stopService(new Intent(this, TrackingService.class));
+		if(challengeData.activeChallengeCount() == 0) {
+			stopService(new Intent(this, TrackingService.class));
+		}
 	}
+	
 	
 }

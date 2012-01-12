@@ -18,6 +18,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
 import com.challengeearth.cedroid.helpers.AdapterImageLoader;
+import com.challengeearth.cedroid.services.UpdateService;
 
 /**
  * This is the Activity that shows an overview over all Available challenges.

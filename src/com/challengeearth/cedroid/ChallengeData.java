@@ -51,6 +51,7 @@ public class ChallengeData {
 	}
 	
 	private final DbHelper dbHelper;
+	private int activeCount = -1;
 	
 	public ChallengeData(Context context) {
 		this.dbHelper = new DbHelper(context);
@@ -86,6 +87,15 @@ public class ChallengeData {
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
 		String[] selectArgs = {Long.toString(id)};
 		return db.query(TABLE, null, C_ID + " = ?", selectArgs, null, null, null);
+	}
+	
+	public int activeChallengeCount() {
+		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+		Cursor cursor = db.query(TABLE, new String [] {C_ID}, C_ACTIVE + "= 1", null, null, null, null);
+		activeCount = cursor.getCount();
+		cursor.close();
+		db.close();
+		return activeCount;
 	}
 	
 	public void updateChallenge(long id, ContentValues values) {

@@ -1,6 +1,6 @@
 package com.challengeearth.cedroid.receivers;
 
-import com.challengeearth.cedroid.UpdateService;
+import com.challengeearth.cedroid.services.UpdateService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

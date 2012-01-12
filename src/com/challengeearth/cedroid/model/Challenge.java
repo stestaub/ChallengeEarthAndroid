@@ -1,4 +1,4 @@
-package com.challengeearth.cedroid;
+package com.challengeearth.cedroid.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
