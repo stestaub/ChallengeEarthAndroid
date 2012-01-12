@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.challengeearth.cedroid.ChallengeData.DbHelper;
 import com.challengeearth.cedroid.services.UpdateService;
 
 public class BaseActivity extends Activity {

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class ChallengeData {
@@ -24,32 +23,6 @@ public class ChallengeData {
 	public static final String C_PROGRESS = "progress";
 	public static final String C_IMAGE = "image_url";
 	
-	static class DbHelper extends SQLiteOpenHelper {
-
-		public DbHelper(Context context) {
-			super(context, DATABASE, null, VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			Log.i(TAG, "creating db: " + DATABASE);
-			db.execSQL("create table " + TABLE + " (" + C_ID + " long primary key, " +
-					C_TITLE + " text, " +
-					C_DESC + " text," +
-					C_ACTIVE + " boolean, " +
-					C_LATITUDE + " double," +
-					C_LONGITUDE + " double," +
-					C_PROGRESS + " int," +
-					C_IMAGE + " text)");
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			db.execSQL("drop table" + TABLE);
-			this.onCreate(db);
-		}
-	}
-	
 	private final DbHelper dbHelper;
 	private int activeCount = -1;
 	
@@ -61,7 +34,6 @@ public class ChallengeData {
 	public void close() {
 		this.dbHelper.close();
 	}
-	
 	
 	public boolean insertOrIgnore(ContentValues values) {
 		Log.d(TAG, "insertOrIgnre on " + values);
