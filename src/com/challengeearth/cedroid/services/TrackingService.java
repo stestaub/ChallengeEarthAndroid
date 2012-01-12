@@ -42,6 +42,11 @@ public class TrackingService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		locationManager.removeUpdates(locationListener);
+		locationListener = null;
+		locationManager = null;
+		application = null;
+		values = null;
 		Log.i(TAG, "on Destroy Tracking Service");
 	}
 
@@ -59,6 +64,9 @@ public class TrackingService extends Service {
 		return START_STICKY;
 	}
 	
+	/**
+	 * Moves this service to the foreground and sets the notification
+	 */
 	private void startInForeground() {
 		Notification notification = 
 				new Notification(android.R.drawable.ic_menu_compass, getText(R.string.notificationRunning),System.currentTimeMillis());
