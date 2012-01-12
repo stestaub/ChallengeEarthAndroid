@@ -19,11 +19,13 @@ public class CeApplication extends Application {
 	
 	private boolean updaterRunning;
 	private ChallengeData challengeData;
+	private ActivityData activityData;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		this.challengeData = new ChallengeData(this);
+		this.activityData = new ActivityData(this);
 	}
 
 	public boolean isUpdaterRunning() {
@@ -32,6 +34,10 @@ public class CeApplication extends Application {
 	
 	public ChallengeData getChallengeData() {
 		return this.challengeData;
+	}
+	
+	public ActivityData getActivityData() {
+		return this.activityData;
 	}
 	
 	/**
