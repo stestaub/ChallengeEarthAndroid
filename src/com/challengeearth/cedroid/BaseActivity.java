@@ -2,7 +2,6 @@ package com.challengeearth.cedroid;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,15 +12,14 @@ import com.challengeearth.cedroid.services.UpdateService;
 public class BaseActivity extends Activity {
 	
 	protected DbHelper dbHelper;
-	protected SQLiteDatabase db;
 	protected CeApplication application;
 	protected ChallengeData challengeData;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		// Prepare Database
-	    this.dbHelper = new DbHelper(this);
 	    this.application = (CeApplication) getApplication();
 	    this.challengeData = application.getChallengeData();
 	}
@@ -33,7 +31,6 @@ public class BaseActivity extends Activity {
 	}
 
 	/// Menu handling --------------------------------------------------------------------------------------
-	
 	/**
 	 * Creating the menu
 	 */

@@ -99,6 +99,4 @@ public class CeApplication extends Application {
 			stopService(new Intent(this, TrackingService.class));
 		}
 	}
-	
-	
 }
