@@ -21,7 +21,10 @@ import com.challengeearth.cedroid.R;
 public class TrackingService extends Service {
 
 	private static final String TAG = "TrackingService";
+	public static final String NEW_ACTIVITY = "com.challengeearth.NEW_ACTIVITY	";
 	private static final int TRACKING_SERVICE = 1;
+	
+	
 	private LocationManager locationManager;
 	private CeApplication application;
 	private ContentValues values;
@@ -59,6 +62,7 @@ public class TrackingService extends Service {
  		// updates
  		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
  		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, locationListener);
+ 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 50, locationListener);
 		values = new ContentValues(1);
 		
 		return START_STICKY;
@@ -68,8 +72,10 @@ public class TrackingService extends Service {
 	 * Moves this service to the foreground and sets the notification
 	 */
 	private void startInForeground() {
-		Notification notification = 
-				new Notification(android.R.drawable.ic_menu_compass, getText(R.string.notificationRunning),System.currentTimeMillis());
+		Notification notification = new Notification(
+				android.R.drawable.ic_menu_compass, 
+				getText(R.string.notificationRunning),
+				System.currentTimeMillis());
 		
 		Intent notificationIntent = new Intent(this, OverviewActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -84,21 +90,19 @@ public class TrackingService extends Service {
 	private LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location location) {
 			Log.d(TAG, "new locaion data recieved");
+			
 			values.put(ActivityData.C_LATITUDE, location.getLatitude());
 			values.put(ActivityData.C_LONGITUDE, location.getLongitude());
-			application.getActivityData().insertActivity(values, new int[] {});
+			values.put(ActivityData.C_TIMESTAMP, System.currentTimeMillis());
+			long[] challenges = application.getChallengeData().getActiveChallenges();
+			application.getActivityData().insertActivity(values, challenges);
+			
+			Intent intent = new Intent(NEW_ACTIVITY);
+			sendBroadcast(intent);
 		}
 
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			
-		}
-
-		public void onProviderEnabled(String provider) {
-			
-		}
-
-		public void onProviderDisabled(String provider) {
-			
-		}
+		public void onStatusChanged(String provider, int status, Bundle extras) {}
+		public void onProviderEnabled(String provider) {}
+		public void onProviderDisabled(String provider) {}
 	};
 }

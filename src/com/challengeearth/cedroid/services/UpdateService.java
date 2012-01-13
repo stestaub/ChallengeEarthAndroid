@@ -25,7 +25,7 @@ public class UpdateService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		CeApplication application = (CeApplication) getApplication();
 		int updates = application.fetchAvailableChallenges();
-		if(updates >0) {
+		if(updates > 0) {
 			intent = new Intent(NEW_CHALLENGES);
 			sendBroadcast(intent);
 		}

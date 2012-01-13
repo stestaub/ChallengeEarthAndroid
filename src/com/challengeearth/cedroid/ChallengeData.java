@@ -119,6 +119,19 @@ public class ChallengeData {
 		return activeCount;
 	}
 	
+	public long[] getActiveChallenges() {
+		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+		Cursor cursor = db.query(TABLE, new String [] {C_ID}, C_ACTIVE + "= 1", null, null, null, null);
+		long[] ids = new long[cursor.getCount()];
+		int index = 0;
+		while(cursor.moveToNext()) {
+			ids[index] = cursor.getLong(cursor.getColumnIndex(C_ID));
+		}
+		cursor.close();
+		db.close();
+		return ids;
+	}
+	
 	/**
 	 * 
 	 * @param id

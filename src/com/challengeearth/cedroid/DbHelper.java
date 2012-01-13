@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private static DbHelper dbHelper;
 	
-	public static DbHelper getInstance(Context context) {
+	public static synchronized DbHelper getInstance(Context context) {
 		if(dbHelper == null) {
 			dbHelper = new DbHelper(context);
 		}
@@ -23,7 +23,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 	
 	private static final String TAG = "DbHelper";
-	static final int VERSION = 1;
+	static final int VERSION = 3	;
 	static final String DATABASE = "challenge.db";
 	
 	private DbHelper(Context context) {
@@ -41,11 +41,21 @@ public class DbHelper extends SQLiteOpenHelper {
 				ChallengeData.C_LONGITUDE + " double," +
 				ChallengeData.C_PROGRESS + " int," +
 				ChallengeData.C_IMAGE + " text)");
+		
+		db.execSQL("create table " + ActivityData.TABLE + " (" + ActivityData.C_ID + " integer primary key autoincrement, " +
+				ActivityData.C_LATITUDE + " double, " +
+				ActivityData.C_LONGITUDE + " double," +
+				ActivityData.C_TIMESTAMP + " long)");
+		
+		db.execSQL("create table " + ActivityData.TABLE_CHALLENGE + " (" + ActivityData.C_ACT_ID + " integer, " +
+				ActivityData.C_CHALL_ID + " long)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("drop table" + ChallengeData.TABLE);
+		db.execSQL("drop table " + ChallengeData.TABLE);
+		db.execSQL("drop table " + ActivityData.TABLE);
+		db.execSQL("drop table " + ActivityData.TABLE_CHALLENGE);
 		this.onCreate(db);
 	}
 }

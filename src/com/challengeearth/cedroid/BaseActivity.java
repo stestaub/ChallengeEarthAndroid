@@ -3,6 +3,7 @@ package com.challengeearth.cedroid;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,7 +12,8 @@ import com.challengeearth.cedroid.services.UpdateService;
 
 public class BaseActivity extends Activity {
 	
-	protected DbHelper dbHelper;
+	private static final String TAG = "BaseActivity";
+	
 	protected CeApplication application;
 	protected ChallengeData challengeData;
 	
@@ -28,6 +30,7 @@ public class BaseActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		this.challengeData.close();
+		Log.d(TAG, "on Destroy");
 	}
 
 	/// Menu handling --------------------------------------------------------------------------------------

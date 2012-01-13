@@ -98,9 +98,11 @@ public class OverviewActivity extends BaseActivity {
 	protected void onResume() {
 		super.onResume();
 		
+		
 		// prepare the data
 		this.cursor = challengeData.getAvailableChallenges();
 		startManagingCursor(cursor);
+		Log.d(TAG, "start managing cursor");
 		
 		// set the adapter
 		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
@@ -116,15 +118,15 @@ public class OverviewActivity extends BaseActivity {
 				intent.putExtra(ChallengeData.C_ID, c_id);
 				startActivity(intent);
 			}
-			
 		});
-		
 		registerReceiver(receiver, filter);
+		Log.d(TAG, "receiver registered");
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(receiver);
+		Log.d(TAG, "receiver unregistered");
 	}
 }
