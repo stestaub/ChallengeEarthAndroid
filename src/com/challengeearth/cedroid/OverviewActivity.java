@@ -38,8 +38,8 @@ public class OverviewActivity extends BaseActivity {
     
     private static final String TAG = "OverviewActivity";
     
-    static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_DESC, ChallengeData.C_IMAGE, ChallengeData.C_ACTIVE};
-    static final int[] MAP_TO = {R.id.title, R.id.description, R.id.image, R.id.iconRunning};
+    static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_IMAGE, ChallengeData.C_ACTIVE};
+    static final int[] MAP_TO = {R.id.title, R.id.image, R.id.iconRunning};
 	
     /**
 	 * View Binder to load the images from the internet
@@ -158,6 +158,12 @@ public class OverviewActivity extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		
+		challengeList = null;
+	    adapter = null;
+	    receiver = null;
+	    filter = null;
+		
 		Log.d(TAG, "on Destroy");
 	}
 }

@@ -89,8 +89,13 @@ public class BaseActivity extends Activity {
 			// The last activity stops the services. Services are only stopped when no challenge is active
 			application.requestStopUpdates(false);
 			application.requestStopTracking(false);
+			
+			System.gc();
+			
 			Log.d(TAG, "Last activity destroyed");
 		}
+		
+		challengeData = null;
 	}
 
 	

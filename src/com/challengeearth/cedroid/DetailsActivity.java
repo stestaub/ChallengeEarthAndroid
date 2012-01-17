@@ -128,6 +128,16 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	
 	@Override
 	protected void onDestroy() {
+		title = null;
+		description = null;
+		progress = null;
+		button = null;
+		image = null;
+		
+		receiver = null;
+		filter = null;
+		imageLoader = null;
+		
 		super.onDestroy();
 		Log.d(TAG, "on Destroy");
 	}
