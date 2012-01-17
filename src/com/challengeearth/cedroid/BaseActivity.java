@@ -2,7 +2,9 @@ package com.challengeearth.cedroid;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,22 +18,20 @@ public class BaseActivity extends Activity {
 	
 	protected CeApplication application;
 	protected ChallengeData challengeData;
+	protected SharedPreferences prefs;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		// Prepare Database
 	    this.application = (CeApplication) getApplication();
 	    this.challengeData = application.getChallengeData();
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		this.challengeData.close();
-		Log.d(TAG, "on Destroy");
-	}
+
 
 	/// Menu handling --------------------------------------------------------------------------------------
 	/**
@@ -52,6 +52,9 @@ public class BaseActivity extends Activity {
 		switch(item.getItemId()) {
 		case R.id.itemRefresh:
 			startService(new Intent(this, UpdateService.class));
+			break;
+		case R.id.prefs:
+			startActivity(new Intent(this, PrefsActivity.class));
 			break;
 		}
 		return true;

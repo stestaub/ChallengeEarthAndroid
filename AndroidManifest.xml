@@ -36,6 +36,7 @@
         
         <service android:name="com.challengeearth.cedroid.services.UpdateService"/>
         <service android:name="com.challengeearth.cedroid.services.TrackingService"/>
+        <activity android:name="PrefsActivity"></activity>
     </application>
 
 </manifest>

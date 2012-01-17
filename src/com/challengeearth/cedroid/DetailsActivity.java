@@ -1,5 +1,9 @@
 package com.challengeearth.cedroid;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +21,23 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	private long challengeId;
 	private boolean challengeActive;
 	
+	private ChallengeUpdatesReceiver receiver;
+    private IntentFilter filter;
+	
 	TextView title;
 	TextView description;
 	ProgressBar progress;
 	ImageButton button;
+	
+	class ChallengeUpdatesReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			cursor.requery();
+			cursor.moveToFirst();
+			progress.setProgress(cursor.getInt(cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
+			Log.d(TAG, "Update broadcast received and done. Progress is now on: " + cursor.getColumnIndex(ChallengeData.C_PROGRESS));
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +49,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         description = (TextView) findViewById(R.id.challengeDescription);
         progress = (ProgressBar) findViewById(R.id.progress);
         button = (ImageButton) findViewById(R.id.toggelTracking);
+        
+        this.receiver = new ChallengeUpdatesReceiver();
+	    this.filter = new IntentFilter("com.challengeearth.NEW_CHALLENGES");
 	}
 
 	@Override
@@ -41,6 +61,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		// Get challenge Id
 		this.challengeId = getIntent().getExtras().getLong(ChallengeData.C_ID);
         this.cursor = challengeData.getChallengeById(this.challengeId);
+        //startManagingCursor(cursor);
         this.cursor.moveToFirst();
         
         // Set contents
@@ -51,6 +72,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         
         button.setOnClickListener(this);
         setButtonState();
+        
+        registerReceiver(receiver, filter);
 
 	}
 
@@ -79,9 +102,17 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	protected void onPause() {
+		unregisterReceiver(receiver);
 		super.onPause();
 		cursor.close();
+		cursor = null;
+		this.challengeData.close();
 	}
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d(TAG, "on Destroy");
+	}
 	
 }

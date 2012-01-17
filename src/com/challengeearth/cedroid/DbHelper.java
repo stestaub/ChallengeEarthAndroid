@@ -13,20 +13,12 @@ import android.util.Log;
  */
 public class DbHelper extends SQLiteOpenHelper {
 
-	private static DbHelper dbHelper;
-	
-	public static synchronized DbHelper getInstance(Context context) {
-		if(dbHelper == null) {
-			dbHelper = new DbHelper(context);
-		}
-		return dbHelper;
-	}
-	
+
 	private static final String TAG = "DbHelper";
 	static final int VERSION = 3	;
 	static final String DATABASE = "challenge.db";
 	
-	private DbHelper(Context context) {
+	public DbHelper(Context context) {
 		super(context, DATABASE, null, VERSION);
 	}
 

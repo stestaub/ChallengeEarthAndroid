@@ -8,4 +8,9 @@
     <string name="titleChallenge">Challenge</string>
     <string name="labelProgress">Progress</string>
 	<string name="notificationRunning">Tracking Running</string>
+	<string name="titleUsername">Username</string>
+	<string name="descUsername">Enter your username for the CE Account</string>
+	<string name="titlePassword">Password</string>
+	<string name="descPassword">Ihr CE Account Benutzerpasswort</string>
+	<string name="titlePreferences">Einstellungen</string>
 </resources>

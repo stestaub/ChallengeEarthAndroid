@@ -11,7 +11,10 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import android.accounts.NetworkErrorException;
 import android.content.Context;
@@ -20,8 +23,10 @@ import android.util.Log;
 
 public class NetworkUtilities {
 
-	private final static String BASE_URI = "http://www.challenge-earth.com:47509/ChallengeEarth/rest";
+	private final static String BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/rest";
+	//private final static String BASE_URI = "http://www.challenge-earth.com:47509/ChallengeEarth/rest";
 	private final static String TAG = "NetworkUtilities";
+	
 	
 	/**
 	 * This method returns true, when network connectivity is available, either wifi or mobile
@@ -39,6 +44,7 @@ public class NetworkUtilities {
 		boolean networkAvailable = (wifi.isConnected() || mobile.isConnected());
 		return networkAvailable;
 	}
+
 	
 	/**
 	 * <p>Retrieves the GET Reader to based on the Base URI and the given path</p>
@@ -75,5 +81,22 @@ public class NetworkUtilities {
 		else {
 			throw new NetworkErrorException();
 		}
+	}
+	
+	public static BufferedReader doPost(JSONObject object, String path) {
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(BASE_URI + path);
+		try {
+			post.setEntity(new StringEntity(object.toString()));
+			post.setHeader("Content-Type", "application/json");
+			Log.i(TAG, "Do post: " + object.toString());
+			InputStream content = client.execute(post).getEntity().getContent();
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(content));
+			return reader;
+		} catch (Exception e) {
+			Log.e(TAG, "could not perform post", e);
+		}
+		return null;
 	}
 }

@@ -37,6 +37,10 @@ public class JSONParser<T extends IJSONParsable> {
 		this.clazz = clazz;
 	}
 	
+	public String getJSONString() {
+		return this.jsonString;
+	}
+	
 	public List<T> parseList() throws JSONException, IllegalAccessException, InstantiationException {
 		JSONArray jArray = new JSONArray(jsonString);
 		ArrayList<T> list = new ArrayList<T>();

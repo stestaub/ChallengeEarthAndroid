@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference android:title="@string/titleUsername" android:summary="@string/descUsername" android:key="username"/>
+    <EditTextPreference android:title="@string/titlePassword" android:summary="@string/descPassword" android:key="password" android:password="true"/>
+    <EditTextPreference android:title="UserID" android:summary="Nur für Entwicklung" android:key="userid"/>
+    <EditTextPreference android:title="BASE_URL" android:summary="Nur für Entwicklung" android:key="base_url"/>
+    <EditTextPreference android:title="Image base URL" android:summary="Nur für Entwicklung" android:key="image_base_url"/>
+    
+
+</PreferenceScreen>

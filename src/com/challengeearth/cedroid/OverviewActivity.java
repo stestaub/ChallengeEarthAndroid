@@ -71,11 +71,10 @@ public class OverviewActivity extends BaseActivity {
 	class ChallengeUpdatesReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			cursor.requery();
+			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 			Log.d(TAG, "ChallengeUpdate Received");
 		}
-		
 	}
     
 	/** Called when the activity is first created. */
@@ -98,14 +97,12 @@ public class OverviewActivity extends BaseActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		
 		// prepare the data
 		this.cursor = challengeData.getAvailableChallenges();
-		startManagingCursor(cursor);
 		Log.d(TAG, "start managing cursor");
 		
 		// set the adapter
-		this.adapter = new SimpleCursorAdapter(this, R.layout.row, cursor, MAP_FROM, MAP_TO);
+		this.adapter = new SimpleCursorAdapter(this, R.layout.row, this.cursor, MAP_FROM, MAP_TO);
 		this.adapter.setViewBinder(VIEW_BINDER);
 		this.challengeList.setAdapter(this.adapter);
 		this.challengeList.setOnItemClickListener(new OnItemClickListener() {
@@ -128,5 +125,14 @@ public class OverviewActivity extends BaseActivity {
 		super.onPause();
 		unregisterReceiver(receiver);
 		Log.d(TAG, "receiver unregistered");
+		cursor.close();
+		cursor = null;
+		this.challengeData.close();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d(TAG, "on Destroy");
 	}
 }
