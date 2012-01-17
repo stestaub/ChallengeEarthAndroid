@@ -38,8 +38,8 @@ public class OverviewActivity extends BaseActivity {
     
     private static final String TAG = "OverviewActivity";
     
-    static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_DESC, ChallengeData.C_IMAGE};
-    static final int[] MAP_TO = {R.id.title, R.id.description, R.id.image};
+    static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_DESC, ChallengeData.C_IMAGE, ChallengeData.C_ACTIVE};
+    static final int[] MAP_TO = {R.id.title, R.id.description, R.id.image, R.id.iconRunning};
 	
     /**
 	 * View Binder to load the images from the internet
@@ -48,17 +48,42 @@ public class OverviewActivity extends BaseActivity {
 		
 		@Override
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-			if(view.getId() != R.id.image) {
+			switch(view.getId()) {
+			case R.id.iconRunning:
+				setChallengeStatusIcon(cursor, (ImageView) view);
+				return true;
+			case R.id.image:
+				// Load challenge image
+				AdapterImageLoader imageLoader = new AdapterImageLoader(null);
+				try {
+					imageLoader.addImage(new URL(cursor.getString(columnIndex)), (ImageView)view);
+				}
+				catch (Exception e) {
+					Log.e(TAG, "could not load image", e);
+				}
+				return true;
+			default:
 				return false;
 			}
-			AdapterImageLoader imageLoader = new AdapterImageLoader(null);
-			try {
-				imageLoader.addImage(new URL(cursor.getString(columnIndex)), (ImageView)view);
+		}
+		
+		private void setChallengeStatusIcon(Cursor cursor, ImageView image) {
+			
+			if(cursor.getInt(cursor.getColumnIndex(ChallengeData.C_PROGRESS)) == 100) {
+				image.setImageResource(R.drawable.done);
+				Log.d(TAG, "setting challenge icon to done");
+			} 
+			else if(cursor.getInt(cursor.getColumnIndex(ChallengeData.C_ACTIVE)) > 0) {
+				image.setImageResource(R.drawable.running);
+				Log.d(TAG, "setting challenge icon to running");
 			}
-			catch (Exception e) {
-				Log.e(TAG, "could not load image", e);
+			else if(cursor.getInt(cursor.getColumnIndex(ChallengeData.C_UNUSED)) == 0) {
+				image.setImageResource(R.drawable.pause);
+				Log.d(TAG, "setting challenge icon to pause");
 			}
-			return true;
+			else {
+				image.setImageDrawable(null);
+			}
 		}
 	};
 	
