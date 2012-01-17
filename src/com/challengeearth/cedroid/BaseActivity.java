@@ -31,10 +31,13 @@ public class BaseActivity extends Activity {
 	    this.application = (CeApplication) getApplication();
 	    this.challengeData = application.getChallengeData();
 	    
+	    // Increase activity count
 	    activityCount++;
 	    
-	    if(isUIRunning()) {
+	    if(activityCount == 1) {
 	    	Log.d(TAG, "first Activity started");
+	    	
+	    	// The first Activity starts also updating and tracking
 	    	this.application.startPeriodicUpdates();
 		    this.application.startTracking();
 	    }
@@ -77,9 +80,13 @@ public class BaseActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		
+		// Decrease activity count
 		activityCount--;
 		Log.d(TAG, "on Activity Destroy, Activitys still running: " + activityCount);
+		
 		if(!isUIRunning()) {
+			// The last activity stops the services. Services are only stopped when no challenge is active
 			application.requestStopUpdates(false);
 			application.requestStopTracking(false);
 			Log.d(TAG, "Last activity destroyed");

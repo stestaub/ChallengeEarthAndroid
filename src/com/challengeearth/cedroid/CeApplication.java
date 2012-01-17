@@ -140,7 +140,7 @@ public class CeApplication extends Application {
 				json.put("userId", prefs.getString("userid", "1"));
 				BufferedReader response = NetworkUtilities.doPost(json, "/challenge");
 				if(response != null) {
-					handleResponse(response);
+					handleActivityDataResponse(response);
 				}
 				activityData.removeActivityData(cursor.getInt(cursor.getColumnIndex(ActivityData.C_ID)));
 			} catch (Exception e){
@@ -152,7 +152,7 @@ public class CeApplication extends Application {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void handleResponse(BufferedReader response) {
+	private void handleActivityDataResponse(BufferedReader response) {
 		JSONParser parser = new JSONParser(response, Void.class);
 		String jsonString = parser.getJSONString();
 		try {
