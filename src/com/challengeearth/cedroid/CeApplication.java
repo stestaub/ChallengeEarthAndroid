@@ -8,7 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,14 +22,20 @@ import com.challengeearth.cedroid.helpers.JSONParser;
 import com.challengeearth.cedroid.helpers.NetworkUtilities;
 import com.challengeearth.cedroid.model.Challenge;
 import com.challengeearth.cedroid.services.TrackingService;
+import com.challengeearth.cedroid.services.UpdateService;
 
 public class CeApplication extends Application {
 
 	private static final String TAG = "CeApplication";
+	private static final long DEFAULT_UPDATE_INTERVAL = 30000; 
 	
 	private boolean updaterRunning;
+	private boolean trackingActive;
 	private ChallengeData challengeData;
 	private ActivityData activityData;
+	
+	private Intent updaterServiceIntent;
+	private PendingIntent updaterPendingIntent;
 
 	private SharedPreferences prefs;
 	
@@ -37,8 +45,16 @@ public class CeApplication extends Application {
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.challengeData = new ChallengeData(this);
 		this.activityData = new ActivityData(this);
+		
+		// Prepare Intent for UpdaterService
+		updaterServiceIntent = new Intent(this, UpdateService.class);
+		updaterPendingIntent = PendingIntent.getService(this, -1, updaterServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
-
+	
+	public boolean isTrackingActive() {
+		return this.trackingActive;
+	}
+	
 	public boolean isUpdaterRunning() {
 		return updaterRunning;
 	}
@@ -49,6 +65,10 @@ public class CeApplication extends Application {
 	
 	public ActivityData getActivityData() {
 		return this.activityData;
+	}
+	
+	public long getUpdateInterval() {
+		return DEFAULT_UPDATE_INTERVAL;
 	}
 	
 	/**
@@ -158,9 +178,10 @@ public class CeApplication extends Application {
 	public void startChallenge(long id) {
 		Log.d(TAG, "Start tracking for challenge: " + id);
 		challengeData.setChallengeStatus(id, true);
-		startService(new Intent(this, TrackingService.class));
+		this.trackingActive = true;
+		this.startTracking();
 	}
-	
+		
 	/**
 	 * Stops the challenge with the given id;
 	 * 
@@ -170,7 +191,53 @@ public class CeApplication extends Application {
 	public void stopChallenge(long id) {
 		Log.d(TAG, "Stop tracking for challenge: " + id);
 		challengeData.setChallengeStatus(id, false);
-		if(challengeData.activeChallengeCount() == 0) {
+	}
+	
+	public void startPeriodicUpdates() {
+		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+				System.currentTimeMillis(), this.getUpdateInterval(), updaterPendingIntent);
+	}
+	
+	/**
+	 * This method will stop the periodic updates, but only stops the updates if no Challenges
+	 * are active. This method can be called, when the app is closed.
+	 * 
+	 * To force a stop of the Updates, set the flag forceStop true. This can be used when no network
+	 * access is available.
+	 * 
+	 * @param forceStop
+	 * 		Stops the periodic updates, even if tracking is active.
+	 * 
+	 */
+	public void requestStopUpdates(boolean forceStop) {
+		if(forceStop || (challengeData.activeChallengeCount() == 0)) {
+			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+			alarmManager.cancel(updaterPendingIntent);
+		}
+	}
+	
+	/**
+	 * Starts the tracking service
+	 */
+	public void startTracking() {
+		this.trackingActive = true;
+		startService(new Intent(this, TrackingService.class));
+	}
+	
+	/**
+	 * This method will stop the tracking, but only stops the tracking if no Challenges
+	 * are active. This method can be called, when the app is closed.
+	 * 
+	 * To force a stop of the tracking, set the flag forceStop true
+	 * 
+	 * @param forceStop
+	 * 		Stops the periodic tracking, even if tracking is active.
+	 * 
+	 */
+	public void requestStopTracking(boolean forceStop) {
+		if(forceStop || (challengeData.activeChallengeCount() == 0)) {
+			this.trackingActive = false;
 			stopService(new Intent(this, TrackingService.class));
 		}
 	}

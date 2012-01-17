@@ -15,6 +15,7 @@ import com.challengeearth.cedroid.services.UpdateService;
 public class BaseActivity extends Activity {
 	
 	private static final String TAG = "BaseActivity";
+	private static int activityCount = 0;
 	
 	protected CeApplication application;
 	protected ChallengeData challengeData;
@@ -29,8 +30,21 @@ public class BaseActivity extends Activity {
 		// Prepare Database
 	    this.application = (CeApplication) getApplication();
 	    this.challengeData = application.getChallengeData();
+	    
+	    activityCount++;
+	    
+	    if(isUIRunning()) {
+	    	Log.d(TAG, "first Activity started");
+	    	this.application.startPeriodicUpdates();
+		    this.application.startTracking();
+	    }
+	    
+	    Log.d(TAG, "activities running: " + activityCount);
 	}
 
+	static public boolean isUIRunning() {
+		return (activityCount>0);
+	}
 
 
 	/// Menu handling --------------------------------------------------------------------------------------
@@ -60,4 +74,18 @@ public class BaseActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		activityCount--;
+		Log.d(TAG, "on Activity Destroy, Activitys still running: " + activityCount);
+		if(!isUIRunning()) {
+			application.requestStopUpdates(false);
+			application.requestStopTracking(false);
+			Log.d(TAG, "Last activity destroyed");
+		}
+	}
+
+	
+	
 }

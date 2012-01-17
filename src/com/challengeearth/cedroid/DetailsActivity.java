@@ -1,5 +1,7 @@
 package com.challengeearth.cedroid;
 
+import com.challengeearth.cedroid.services.UpdateService;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +53,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         button = (ImageButton) findViewById(R.id.toggelTracking);
         
         this.receiver = new ChallengeUpdatesReceiver();
-	    this.filter = new IntentFilter("com.challengeearth.NEW_CHALLENGES");
+	    this.filter = new IntentFilter(UpdateService.ACTIVITIES_SYNCHRONIZED);
 	}
 
 	@Override

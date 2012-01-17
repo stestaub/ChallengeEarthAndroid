@@ -90,7 +90,7 @@ public class OverviewActivity extends BaseActivity {
 	    
 	    // Prepare Listener for updates
 	    this.receiver = new ChallengeUpdatesReceiver();
-	    this.filter = new IntentFilter("com.challengeearth.NEW_CHALLENGES");
+	    this.filter = new IntentFilter(UpdateService.NEW_CHALLENGES);
     }
 
 	@Override
