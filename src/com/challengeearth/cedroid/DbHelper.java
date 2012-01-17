@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
 	private static final String TAG = "DbHelper";
-	static final int VERSION = 3	;
+	static final int VERSION = 4;
 	static final String DATABASE = "challenge.db";
 	
 	public DbHelper(Context context) {
@@ -29,6 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
 				ChallengeData.C_TITLE + " text, " +
 				ChallengeData.C_DESC + " text," +
 				ChallengeData.C_ACTIVE + " boolean, " +
+				ChallengeData.C_UNUSED + " boolean, " +
 				ChallengeData.C_LATITUDE + " double," +
 				ChallengeData.C_LONGITUDE + " double," +
 				ChallengeData.C_PROGRESS + " int," +

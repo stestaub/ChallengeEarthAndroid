@@ -99,12 +99,14 @@ public class CeApplication extends Application {
 			JSONParser<Challenge> challengeParser = new JSONParser<Challenge>(reader, Challenge.class);
 			List<Challenge> challenges = challengeParser.parseList();
 			
+			challengeData.removeUnusedChallenges();
 			ContentValues values = new ContentValues();
 			
 			for(Challenge c:challenges) {
 				values.put(ChallengeData.C_ID, c.getId());
 				values.put(ChallengeData.C_TITLE, c.getTitle());
 				values.put(ChallengeData.C_DESC, c.getDescription());
+				values.put(ChallengeData.C_UNUSED, true);
 				values.put(ChallengeData.C_IMAGE, c.getImageUrl());
 				values.put(ChallengeData.C_LATITUDE, c.getLatitude());
 				values.put(ChallengeData.C_LONGITUDE, c.getLongitude());

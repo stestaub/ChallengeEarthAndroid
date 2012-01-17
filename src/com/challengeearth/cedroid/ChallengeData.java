@@ -23,6 +23,7 @@ public class ChallengeData {
 	public static final String C_TITLE = "title";
 	public static final String C_DESC = "description";
 	public static final String C_ACTIVE = "active";
+	public static final String C_UNUSED = "unused";
 	public static final String C_LATITUDE = "lat";
 	public static final String C_LONGITUDE = "lon";
 	public static final String C_PROGRESS = "progress";
@@ -77,6 +78,15 @@ public class ChallengeData {
 	public Cursor getAvailableChallenges() {
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
 		return db.query(TABLE, null, null, null, null, null, null);
+	}
+	
+	/**
+	 * Removes all challenges, that have never been started
+	 */
+	public void removeUnusedChallenges() {
+		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+		int removed = db.delete(TABLE, C_UNUSED + " > 0", null);
+		Log.d(TAG, "removed unused challenges: " + removed);
 	}
 	
 	/**
@@ -137,6 +147,7 @@ public class ChallengeData {
 	public void setChallengeStatus(long id, boolean status) {
 		ContentValues values = new ContentValues(1);
 		values.put(ChallengeData.C_ACTIVE, status);
+		values.put(C_UNUSED, false);
 		updateChallenge(id, values);
 	}
 }
