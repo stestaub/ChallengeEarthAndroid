@@ -1,6 +1,7 @@
 package com.challengeearth.cedroid;
 
 import java.io.BufferedReader;
+import java.net.ResponseCache;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.challengeearth.cedroid.caching.CEResponseCache;
 import com.challengeearth.cedroid.helpers.JSONParser;
 import com.challengeearth.cedroid.helpers.NetworkUtilities;
 import com.challengeearth.cedroid.model.Challenge;
@@ -42,6 +44,10 @@ public class CeApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		// Setting up caching
+		ResponseCache.setDefault(new CEResponseCache());
+		
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.challengeData = new ChallengeData(this);
 		this.activityData = new ActivityData(this);

@@ -1,5 +1,9 @@
 package com.challengeearth.cedroid;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import com.challengeearth.cedroid.helpers.AdapterImageLoader;
 import com.challengeearth.cedroid.services.UpdateService;
 
 import android.content.BroadcastReceiver;
@@ -12,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,11 +30,13 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	
 	private ChallengeUpdatesReceiver receiver;
     private IntentFilter filter;
+    private AdapterImageLoader imageLoader;
 	
 	TextView title;
 	TextView description;
 	ProgressBar progress;
 	ImageButton button;
+	ImageView image;
 	
 	class ChallengeUpdatesReceiver extends BroadcastReceiver {
 		@Override
@@ -51,9 +58,12 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         description = (TextView) findViewById(R.id.challengeDescription);
         progress = (ProgressBar) findViewById(R.id.progress);
         button = (ImageButton) findViewById(R.id.toggelTracking);
+        image = (ImageView) findViewById(R.id.detailImage);
         
         this.receiver = new ChallengeUpdatesReceiver();
 	    this.filter = new IntentFilter(UpdateService.ACTIVITIES_SYNCHRONIZED);
+	    
+	    imageLoader = new AdapterImageLoader(null);
 	}
 
 	@Override
@@ -71,6 +81,11 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         title.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_TITLE)));
         description.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_DESC)));
         progress.setProgress(this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
+        try {
+			imageLoader.addImage(new URL(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_IMAGE))), image);
+		} catch (MalformedURLException e) {
+			Log.e(TAG, "could not load image");
+		}
         
         button.setOnClickListener(this);
         setButtonState();
