@@ -89,6 +89,12 @@ public class ChallengeData {
 		Log.d(TAG, "removed unused challenges: " + removed);
 	}
 	
+	public void removeChallenge(long id) {
+		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+		int removed = db.delete(TABLE, C_ID + " = ?", new String[] {Long.toString(id)});
+		Log.d(TAG, "removed unused challenges: " + removed);
+	}
+	
 	/**
 	 * Returns a cursor to the challenge with the given id.
 	 * The cursor is pointing to -1 at this point so you must

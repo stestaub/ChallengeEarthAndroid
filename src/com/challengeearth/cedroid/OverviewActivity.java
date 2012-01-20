@@ -9,6 +9,10 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -41,6 +45,8 @@ public class OverviewActivity extends BaseActivity {
     static final String[] MAP_FROM = {ChallengeData.C_TITLE, ChallengeData.C_IMAGE, ChallengeData.C_ACTIVE};
     static final int[] MAP_TO = {R.id.title, R.id.image, R.id.iconRunning};
 	
+    protected static final int EDIT_ENTRY_DIALOG_ID = 0;
+    
     /**
 	 * View Binder to load the images from the internet
 	 */
@@ -53,6 +59,7 @@ public class OverviewActivity extends BaseActivity {
 				setChallengeStatusIcon(cursor, (ImageView) view);
 				return true;
 			case R.id.image:
+				((ImageView)view).setImageResource(android.R.drawable.gallery_thumb);
 				// Load challenge image
 				AdapterImageLoader imageLoader = new AdapterImageLoader(null);
 				try {
@@ -130,6 +137,8 @@ public class OverviewActivity extends BaseActivity {
 		this.adapter = new SimpleCursorAdapter(this, R.layout.row, this.cursor, MAP_FROM, MAP_TO);
 		this.adapter.setViewBinder(VIEW_BINDER);
 		this.challengeList.setAdapter(this.adapter);
+		
+		// Set the onclick listener for a click on a Challenge
 		this.challengeList.setOnItemClickListener(new OnItemClickListener() {
 			
 			@Override
@@ -141,8 +150,44 @@ public class OverviewActivity extends BaseActivity {
 				startActivity(intent);
 			}
 		});
+		
+		registerForContextMenu(challengeList);
+		
 		registerReceiver(receiver, filter);
 		Log.d(TAG, "receiver registered");
+	}
+
+	/**
+	 * Create the context menu
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context_menu, menu);
+			
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		cursor.moveToPosition(info.position);
+		String title = cursor.getString(cursor.getColumnIndex(ChallengeData.C_TITLE));
+		menu.setHeaderTitle(title);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	  AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+	  int menuItemIndex = item.getItemId();
+	  cursor.moveToPosition(info.position);
+	  long c_id = cursor.getInt(cursor.getColumnIndex(ChallengeData.C_ID));
+	  
+	  switch (menuItemIndex) {
+	  case R.id.deleteChallenge:
+		  application.getChallengeData().removeChallenge(c_id);
+		  break;
+	  }
+	  adapter.getCursor().requery();
+	  adapter.notifyDataSetChanged();
+	  return true;
 	}
 
 	@Override
