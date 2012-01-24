@@ -143,11 +143,18 @@ public class ChallengeData {
 	 * @param id
 	 * @param values
 	 */
-	public void updateChallenge(long id, ContentValues values) {
+	public int updateChallengeProgress(long id, ContentValues values) {
+//		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+//		String[] selectArgs = {Long.toString(id), values.getAsString(C_PROGRESS)};
+//		return db.update(TABLE, values, C_ID + " = ? AND NOT " + C_PROGRESS + " = ?", selectArgs);
+		return updateChallenge(id, values);
+		//db.close();
+	}
+	
+	public int updateChallenge(long id, ContentValues values) {
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
 		String[] selectArgs = {Long.toString(id)};
-		db.update(TABLE, values, C_ID + " = ?", selectArgs);
-		//db.close();
+		return db.update(TABLE, values, C_ID + " = ?", selectArgs);
 	}
 	
 	public void setChallengeStatus(long id, boolean status) {

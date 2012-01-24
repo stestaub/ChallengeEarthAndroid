@@ -14,4 +14,5 @@
 	<string name="descPassword">Ihr CE Account Benutzerpasswort</string>
 	<string name="titlePreferences">Einstellungen</string>
 	<string name="labelDelete">Delete</string>
+	<string name="infoChallengeDone">Challenge Successful!</string>
 </resources>

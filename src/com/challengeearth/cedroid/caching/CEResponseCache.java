@@ -1,6 +1,7 @@
 package com.challengeearth.cedroid.caching;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.net.CacheRequest;
 import java.net.CacheResponse;
 import java.net.ResponseCache;
@@ -13,12 +14,12 @@ import java.util.Map;
 
 public class CEResponseCache extends ResponseCache {
 
-	Map<URI, CacheResponse> mCache = new HashMap<URI, CacheResponse>();
+	Map<URI, SoftReference<CacheResponse>> mCache = new HashMap<URI, SoftReference<CacheResponse>>();
 	
 	@Override
 	public CacheResponse get(URI uri, String requestMethod,
 			Map<String, List<String>> requestHeaders) throws IOException {
-		CacheResponse resp = mCache.get(uri);
+		CacheResponse resp = (mCache.get(uri) != null)?mCache.get(uri).get():null;
 		return resp;
 	}
 
@@ -37,7 +38,7 @@ public class CEResponseCache extends ResponseCache {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		mCache.put(uri, resp);
+		mCache.put(uri, new SoftReference<CacheResponse>(resp));
  
 		return req;
 	}

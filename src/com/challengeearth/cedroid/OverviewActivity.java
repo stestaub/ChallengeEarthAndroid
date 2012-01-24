@@ -1,7 +1,5 @@
 package com.challengeearth.cedroid;
 
-import java.net.URL;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +19,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
-import com.challengeearth.cedroid.helpers.AdapterImageLoader;
 import com.challengeearth.cedroid.services.UpdateService;
 
 /**
@@ -38,7 +35,7 @@ public class OverviewActivity extends BaseActivity {
     
     // Challenge Updates
     private ChallengeUpdatesReceiver receiver;
-    private IntentFilter filter;
+    private IntentFilter filter; 
     
     private static final String TAG = "OverviewActivity";
     
@@ -61,13 +58,8 @@ public class OverviewActivity extends BaseActivity {
 			case R.id.image:
 				((ImageView)view).setImageResource(android.R.drawable.gallery_thumb);
 				// Load challenge image
-				AdapterImageLoader imageLoader = new AdapterImageLoader(null);
-				try {
-					imageLoader.addImage(new URL(cursor.getString(columnIndex)), (ImageView)view);
-				}
-				catch (Exception e) {
-					Log.e(TAG, "could not load image", e);
-				}
+				CeApplication.getImageLoader().fetchDrawableOnThread(cursor.getString(columnIndex), (ImageView)view);
+
 				return true;
 			default:
 				return false;

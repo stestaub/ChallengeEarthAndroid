@@ -21,6 +21,9 @@ public class BaseActivity extends Activity {
 	protected ChallengeData challengeData;
 	protected SharedPreferences prefs;
 	
+	
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,7 +83,6 @@ public class BaseActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
 		// Decrease activity count
 		activityCount--;
 		Log.d(TAG, "on Activity Destroy, Activitys still running: " + activityCount);

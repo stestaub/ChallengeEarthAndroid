@@ -21,7 +21,7 @@ import com.challengeearth.cedroid.R;
 public class TrackingService extends Service {
 
 	private static final String TAG = "TrackingService";
-	public static final String NEW_ACTIVITY = "com.challengeearth.NEW_ACTIVITY	";
+	public static final String NEW_ACTIVITY = "com.challengeearth.NEW_ACTIVITY";
 	private static final int TRACKING_SERVICE = 1;
 	
 	
@@ -61,8 +61,8 @@ public class TrackingService extends Service {
 		// Register the listener with the Location Manager to receive location
  		// updates
  		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
- 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, locationListener);
- 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 50, locationListener);
+ 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+ 		//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 50, locationListener);
 		values = new ContentValues(1);
 		
 		return START_STICKY;

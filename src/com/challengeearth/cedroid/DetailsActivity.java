@@ -1,11 +1,5 @@
 package com.challengeearth.cedroid;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import com.challengeearth.cedroid.helpers.AdapterImageLoader;
-import com.challengeearth.cedroid.services.UpdateService;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.challengeearth.cedroid.services.UpdateService;
+
 public class DetailsActivity extends BaseActivity implements OnClickListener {
 
 	private static final String TAG = "DetailsActivity";
@@ -28,9 +24,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	private long challengeId;
 	private boolean challengeActive;
 	
-	private ChallengeUpdatesReceiver receiver;
+	private NewProgressListener receiver;
     private IntentFilter filter;
-    private AdapterImageLoader imageLoader;
 	
 	TextView title;
 	TextView description;
@@ -38,7 +33,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	ImageButton button;
 	ImageView image;
 	
-	class ChallengeUpdatesReceiver extends BroadcastReceiver {
+	class NewProgressListener extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			cursor.requery();
@@ -60,10 +55,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         button = (ImageButton) findViewById(R.id.toggelTracking);
         image = (ImageView) findViewById(R.id.detailImage);
         
-        this.receiver = new ChallengeUpdatesReceiver();
-	    this.filter = new IntentFilter(UpdateService.ACTIVITIES_SYNCHRONIZED);
-	    
-	    imageLoader = new AdapterImageLoader(null);
+        this.receiver = new NewProgressListener();
+	    this.filter = new IntentFilter(UpdateService.NEW_CHALLENGE_PROGRESS);
 	}
 
 	@Override
@@ -81,11 +74,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         title.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_TITLE)));
         description.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_DESC)));
         progress.setProgress(this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
-        try {
-			imageLoader.addImage(new URL(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_IMAGE))), image);
-		} catch (MalformedURLException e) {
-			Log.e(TAG, "could not load image");
-		}
+
+		CeApplication.getImageLoader().fetchDrawableOnThread(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_IMAGE)), image);
+
         
         button.setOnClickListener(this);
         setButtonState();
@@ -124,6 +115,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		cursor.close();
 		cursor = null;
 		this.challengeData.close();
+		System.gc();
 	}
 	
 	@Override
@@ -136,8 +128,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		
 		receiver = null;
 		filter = null;
-		imageLoader = null;
-		
+		System.gc();
 		super.onDestroy();
 		Log.d(TAG, "on Destroy");
 	}
