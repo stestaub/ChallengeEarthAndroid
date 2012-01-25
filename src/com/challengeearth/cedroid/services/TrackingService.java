@@ -61,7 +61,7 @@ public class TrackingService extends Service {
 		// Register the listener with the Location Manager to receive location
  		// updates
  		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
- 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+ 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
  		//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 50, locationListener);
 		values = new ContentValues(1);
 		
