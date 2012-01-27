@@ -1,5 +1,9 @@
 package com.challengeearth.cedroid;
 
+import java.util.UUID;
+
+import com.challengeearth.cedroid.model.ChallengeAttemptHash;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +32,7 @@ public class ChallengeData {
 	public static final String C_LONGITUDE = "lon";
 	public static final String C_PROGRESS = "progress";
 	public static final String C_IMAGE = "image_url";
+	public static final String C_HASH = "hash";
 	
 	private final DbHelper dbHelper;
 	private int activeCount = -1;
@@ -92,7 +97,7 @@ public class ChallengeData {
 	public void removeChallenge(long id) {
 		SQLiteDatabase db = this.dbHelper.getWritableDatabase();
 		int removed = db.delete(TABLE, C_ID + " = ?", new String[] {Long.toString(id)});
-		Log.d(TAG, "removed unused challenges: " + removed);
+		Log.d(TAG, "removed challenge: " + removed);
 	}
 	
 	/**
@@ -126,12 +131,15 @@ public class ChallengeData {
 		return activeCount;
 	}
 	
-	public long[] getActiveChallenges() {
+	public ChallengeAttemptHash[] getActiveChallenges() {
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(TABLE, new String [] {C_ID}, C_ACTIVE + "= 1", null, null, null, null);
-		long[] ids = new long[cursor.getCount()];
+		Cursor cursor = db.query(TABLE, new String [] {C_ID, C_HASH}, C_ACTIVE + "= 1", null, null, null, null);
+		ChallengeAttemptHash[] ids = new ChallengeAttemptHash[cursor.getCount()];
 		while(cursor.moveToNext()) {
-			ids[cursor.getPosition()] = cursor.getLong(cursor.getColumnIndex(C_ID));
+			ChallengeAttemptHash challenge = new ChallengeAttemptHash();
+			challenge.id = cursor.getLong(cursor.getColumnIndex(C_ID));
+			challenge.hash = cursor.getString(cursor.getColumnIndex(C_HASH));
+			ids[cursor.getPosition()] = challenge;
 		}
 		cursor.close();
 		//db.close();
@@ -158,9 +166,36 @@ public class ChallengeData {
 	}
 	
 	public void setChallengeStatus(long id, boolean status) {
-		ContentValues values = new ContentValues(1);
+		ContentValues values = new ContentValues(3);
+		if(getChallengeStatus(id) == 0) {
+			values.put(C_HASH, UUID.randomUUID().toString());
+		}
 		values.put(ChallengeData.C_ACTIVE, status);
 		values.put(C_UNUSED, false);
 		updateChallenge(id, values);
+	}
+	
+	/**
+	 * Returns the Status of a challenge as the following:
+	 * 0: new challenge, never used
+	 * 1: Active challenge
+	 * 2: paused challenge
+	 * 
+	 * @return
+	 */
+	public int getChallengeStatus(long id) {
+		int status;
+		Cursor cursor = getChallengeById(id);
+		cursor.moveToFirst();
+		if(cursor.getInt(cursor.getColumnIndex(C_UNUSED)) > 0) {
+			status = 0;
+		}
+		else if(cursor.getInt(cursor.getColumnIndex(C_ACTIVE)) > 0) {
+			status = 1;
+		}
+		else {
+			status = 2;
+		}
+		return status;
 	}
 }

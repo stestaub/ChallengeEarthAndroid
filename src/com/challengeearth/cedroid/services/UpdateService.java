@@ -14,6 +14,7 @@ import com.challengeearth.cedroid.R;
 import com.challengeearth.cedroid.helpers.JSONParser;
 import com.challengeearth.cedroid.helpers.NetworkUtilities;
 import com.challengeearth.cedroid.model.Challenge;
+import com.challengeearth.cedroid.model.ChallengeAttemptHash;
 
 import android.app.IntentService;
 import android.content.ContentValues;
@@ -88,12 +89,15 @@ public class UpdateService extends IntentService {
 			
 			JSONObject json = new JSONObject();
 			JSONArray challenges = new JSONArray();
-			long[] challIds = activityData.getChallengeIdForActivity(cursor.getInt(cursor.getColumnIndex(ActivityData.C_ID)));
-			for(long id : challIds) {
-				challenges.put(id);
-			}
+			JSONObject idHashPair = new JSONObject();
+			ChallengeAttemptHash[] challIds = activityData.getChallengeIdHashForActivity(cursor.getInt(cursor.getColumnIndex(ActivityData.C_ID)));
 			
 			try {
+				for(ChallengeAttemptHash challenge : challIds) {
+					idHashPair.put("challengeId", challenge.id);
+					idHashPair.put("attemptHash", challenge.hash);
+					challenges.put(idHashPair);
+				}
 				json.put("challengeId", challenges);
 				json.put("latitude", cursor.getDouble(cursor.getColumnIndex(ActivityData.C_LATITUDE)));
 				json.put("longitude", cursor.getDouble(cursor.getColumnIndex(ActivityData.C_LONGITUDE)));
@@ -120,12 +124,14 @@ public class UpdateService extends IntentService {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public synchronized int fetchChallengeProgresses() {
-		long[] active = challengeData.getActiveChallenges();
+		ChallengeAttemptHash[] active = challengeData.getActiveChallenges();
 		ContentValues values = new ContentValues();
 		int newProgress = 0;
-		for(long id : active) {
+		for(ChallengeAttemptHash challenge : active) {
 			try {
-				BufferedReader reader = NetworkUtilities.getGETReader("progress/"+id+"/"+application.getPreferences().getString("userid", "1"));
+				BufferedReader reader = NetworkUtilities.getGETReader("progress/"+challenge.id+
+						"/"+application.getPreferences().getString("userid", "1")+"/"+
+						challenge.hash);
 				JSONParser parser = new JSONParser(reader, Void.class);
 				String jsonString = parser.getJSONString();
 				JSONObject progressObject = new JSONObject(jsonString);
@@ -133,10 +139,10 @@ public class UpdateService extends IntentService {
 				float finishedCond = progressObject.getInt("finishedConditions");
 				int progress = (int) ((finishedCond/totCond)*100.0f);
 				values.put(ChallengeData.C_PROGRESS, progress);
-				newProgress += challengeData.updateChallengeProgress(id, values);
+				newProgress += challengeData.updateChallengeProgress(challenge.id, values);
 				Log.d(TAG, "challenge updated with progress: " + progress);
 				if(progress == 100) {
-					challengeFinishedEvent(id);
+					challengeFinishedEvent(challenge.id);
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "Error while fetching Challenge Progress", e);
@@ -148,6 +154,7 @@ public class UpdateService extends IntentService {
 	
 	
 	private void challengeFinishedEvent(long challengeId) {
+		application.stopChallenge(challengeId);
 		sendBroadcast(new Intent(CHALLENGE_DONE));
 		Toast.makeText(this, R.string.infoChallengeDone, Toast.LENGTH_LONG);
 	}

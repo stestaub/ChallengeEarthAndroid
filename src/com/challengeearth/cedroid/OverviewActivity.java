@@ -175,6 +175,7 @@ public class OverviewActivity extends BaseActivity {
 	  switch (menuItemIndex) {
 	  case R.id.deleteChallenge:
 		  application.getChallengeData().removeChallenge(c_id);
+		  application.getActivityData().removeActivityDataForChallenge(c_id);
 		  break;
 	  }
 	  adapter.getCursor().requery();

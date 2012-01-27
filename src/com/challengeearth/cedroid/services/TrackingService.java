@@ -17,6 +17,7 @@ import com.challengeearth.cedroid.ActivityData;
 import com.challengeearth.cedroid.CeApplication;
 import com.challengeearth.cedroid.OverviewActivity;
 import com.challengeearth.cedroid.R;
+import com.challengeearth.cedroid.model.ChallengeAttemptHash;
 
 public class TrackingService extends Service {
 
@@ -94,7 +95,7 @@ public class TrackingService extends Service {
 			values.put(ActivityData.C_LATITUDE, location.getLatitude());
 			values.put(ActivityData.C_LONGITUDE, location.getLongitude());
 			values.put(ActivityData.C_TIMESTAMP, System.currentTimeMillis());
-			long[] challenges = application.getChallengeData().getActiveChallenges();
+			ChallengeAttemptHash[] challenges = application.getChallengeData().getActiveChallenges();
 			application.getActivityData().insertActivity(values, challenges);
 			
 			Intent intent = new Intent(NEW_ACTIVITY);

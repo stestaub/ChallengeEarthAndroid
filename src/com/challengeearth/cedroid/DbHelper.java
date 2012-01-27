@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
 	private static final String TAG = "DbHelper";
-	static final int VERSION = 4;
+	static final int VERSION = 7;
 	static final String DATABASE = "challenge.db";
 	
 	public DbHelper(Context context) {
@@ -33,7 +33,8 @@ public class DbHelper extends SQLiteOpenHelper {
 				ChallengeData.C_LATITUDE + " double," +
 				ChallengeData.C_LONGITUDE + " double," +
 				ChallengeData.C_PROGRESS + " int," +
-				ChallengeData.C_IMAGE + " text)");
+				ChallengeData.C_IMAGE + " text," +
+				ChallengeData.C_HASH + " text)");
 		
 		db.execSQL("create table " + ActivityData.TABLE + " (" + ActivityData.C_ID + " integer primary key autoincrement, " +
 				ActivityData.C_LATITUDE + " double, " +
@@ -41,7 +42,8 @@ public class DbHelper extends SQLiteOpenHelper {
 				ActivityData.C_TIMESTAMP + " long)");
 		
 		db.execSQL("create table " + ActivityData.TABLE_CHALLENGE + " (" + ActivityData.C_ACT_ID + " integer, " +
-				ActivityData.C_CHALL_ID + " long)");
+				ActivityData.C_CHALL_ID + " long," +
+				ActivityData.C_ATTEMPT_HASH + " text)");
 	}
 
 	@Override
