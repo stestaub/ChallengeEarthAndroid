@@ -38,6 +38,9 @@ public class DrawableManager {
 	    try {
 	        InputStream is = fetch(urlString);
 	        Drawable drawable = Drawable.createFromStream(is, "src");
+	        if(drawable == null) {
+	        	throw new IOException("image not found");
+	        }
 	        drawableRef = new SoftReference<Drawable>(drawable);
 	        drawableMap.put(urlString, drawableRef);
 	        Log.d(this.getClass().getSimpleName(), "got a thumbnail drawable: " + drawable.getBounds() + ", "

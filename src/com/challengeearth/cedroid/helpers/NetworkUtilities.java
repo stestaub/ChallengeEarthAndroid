@@ -23,8 +23,8 @@ import android.util.Log;
 
 public class NetworkUtilities {
 
-	//private final static String BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/rest";
-	private final static String BASE_URI ="http://ec2-46-137-18-40.eu-west-1.compute.amazonaws.com/ChallengeEarth-1.0-SNAPSHOT/rest";
+	private final static String BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/rest";
+	//private final static String BASE_URI ="http://ec2-46-137-18-40.eu-west-1.compute.amazonaws.com/ChallengeEarth-1.0-SNAPSHOT/rest";
 	//private final static String BASE_URI = "http://www.challenge-earth.com/ChallengeEarth/rest";
 	private final static String TAG = "NetworkUtilities";
 	

@@ -20,8 +20,8 @@ public class Challenge implements IJSONParsable{
 	/**
 	 * The base url for images
 	 */
-	//private static final String IMAGE_BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/";
-	private static final String IMAGE_BASE_URI ="http://ec2-46-137-18-40.eu-west-1.compute.amazonaws.com/ChallengeEarth-1.0-SNAPSHOT/";
+	private static final String IMAGE_BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/";
+	//private static final String IMAGE_BASE_URI ="http://ec2-46-137-18-40.eu-west-1.compute.amazonaws.com/ChallengeEarth-1.0-SNAPSHOT/";
 	private static final String TAG = "Challenge";
 	
 	/**
