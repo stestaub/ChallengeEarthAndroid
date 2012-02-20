@@ -22,6 +22,7 @@ public class Challenge implements IJSONParsable{
 	 */
 	private static final String IMAGE_BASE_URI = "http://160.85.232.31:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/";
 	//private static final String IMAGE_BASE_URI ="http://ec2-46-137-18-40.eu-west-1.compute.amazonaws.com/ChallengeEarth-1.0-SNAPSHOT/";
+	//private final static String IMAGE_BASE_URI = "http://192.168.43.18:8080/com.challengeEarth_ChallengeEarth_war_1.0-SNAPSHOT/";
 	private static final String TAG = "Challenge";
 	
 	/**
@@ -91,8 +92,14 @@ public class Challenge implements IJSONParsable{
 		//Parse startposition
 		if(json.has("startPosition")) parseStartposition(json.getJSONObject("startPosition"));
 		if(json.has("achievmentDesc")) {
-			JSONObject image = json.getJSONObject("achievmentDesc").getJSONObject("image");
-			this.imageUrl = IMAGE_BASE_URI + image.getString("filePath") +  "/" + image.getString("fileName");
+			JSONObject achDesc = json.getJSONObject("achievmentDesc");
+			if(achDesc.has("image")) {
+				JSONObject image = achDesc.getJSONObject("image");
+				this.imageUrl = IMAGE_BASE_URI + image.getString("filePath") +  "/" + image.getString("fileName");
+			}
+			else {
+				this.imageUrl = IMAGE_BASE_URI + "/defaultImage.jpg";
+			}
 		}
 		
 		Log.d(TAG, "Challenge parsed: "  + this.toString());

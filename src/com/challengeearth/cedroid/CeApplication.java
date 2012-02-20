@@ -18,7 +18,7 @@ import com.challengeearth.cedroid.services.UpdateService;
 public class CeApplication extends Application {
 	
 	private static final String TAG = "CeApplication";
-	private static final long DEFAULT_UPDATE_INTERVAL = 5000; 
+	private static final long DEFAULT_UPDATE_INTERVAL = 50000; 
 	
 	private boolean updaterRunning;
 	private boolean trackingActive;

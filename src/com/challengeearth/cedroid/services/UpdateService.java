@@ -89,11 +89,11 @@ public class UpdateService extends IntentService {
 			
 			JSONObject json = new JSONObject();
 			JSONArray challenges = new JSONArray();
-			JSONObject idHashPair = new JSONObject();
 			ChallengeAttemptHash[] challIds = activityData.getChallengeIdHashForActivity(cursor.getInt(cursor.getColumnIndex(ActivityData.C_ID)));
 			
 			try {
 				for(ChallengeAttemptHash challenge : challIds) {
+					JSONObject idHashPair = new JSONObject();
 					idHashPair.put("challengeId", challenge.id);
 					idHashPair.put("attemptHash", challenge.hash);
 					challenges.put(idHashPair);
@@ -135,9 +135,7 @@ public class UpdateService extends IntentService {
 				JSONParser parser = new JSONParser(reader, Void.class);
 				String jsonString = parser.getJSONString();
 				JSONObject progressObject = new JSONObject(jsonString);
-				float totCond = progressObject.getInt("totalConditions");
-				float finishedCond = progressObject.getInt("finishedConditions");
-				int progress = (int) ((finishedCond/totCond)*100.0f);
+				int progress = progressObject.getInt("progress");
 				values.put(ChallengeData.C_PROGRESS, progress);
 				newProgress += challengeData.updateChallengeProgress(challenge.id, values);
 				Log.d(TAG, "challenge updated with progress: " + progress);
