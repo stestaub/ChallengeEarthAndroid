@@ -1,5 +1,10 @@
 package com.challengeearth.cedroid;
 
+import java.util.ArrayList;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.OverlayItem;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +16,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.challengeearth.cedroid.map.Map;
 import com.challengeearth.cedroid.services.UpdateService;
 
 public class DetailsActivity extends BaseActivity implements OnClickListener {
@@ -32,6 +39,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	ProgressBar progress;
 	ImageButton button;
 	ImageView image;
+	
+	private Map map;
+	private ArrayList<OverlayItem> chalLocOverlayArray;
 	
 	class NewProgressListener extends BroadcastReceiver {
 		@Override
@@ -59,6 +69,11 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         
         this.receiver = new NewProgressListener();
 	    this.filter = new IntentFilter(UpdateService.NEW_CHALLENGE_PROGRESS);
+	    
+	    // Add map
+	    this.map = new Map(this, (LinearLayout)findViewById(R.id.mapContainerDetail));
+	    this.map.setZoomVisible(false);
+	    this.chalLocOverlayArray = new ArrayList<OverlayItem>();
 	}
 
 	@Override
@@ -78,7 +93,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         progress.setProgress(this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
 
 		CeApplication.getImageLoader().fetchDrawableOnThread(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_IMAGE)), image);
-
+		addChallengeToMap();
         
         button.setOnClickListener(this);
         setButtonState();
@@ -120,6 +135,17 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		System.gc();
 	}
 	
+	private void addChallengeToMap() {
+		OverlayItem chal = new OverlayItem(
+				cursor.getString(cursor.getColumnIndex(ChallengeData.C_ID)),
+				cursor.getString(cursor.getColumnIndex(ChallengeData.C_DESC)), 
+				new GeoPoint(
+						cursor.getDouble(cursor.getColumnIndex(ChallengeData.C_LATITUDE)), 
+						cursor.getDouble(cursor.getColumnIndex(ChallengeData.C_LONGITUDE))));
+		this.chalLocOverlayArray.add(chal);
+		this.map.addChallengeOverlays(chalLocOverlayArray);
+	}
+	
 	@Override
 	protected void onDestroy() {
 		challengeTitle = null;
@@ -127,6 +153,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		progress = null;
 		button = null;
 		image = null;
+		
+		this.map.destroy();
+		this.map = null;
 		
 		receiver = null;
 		filter = null;

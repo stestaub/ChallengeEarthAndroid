@@ -37,6 +37,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
 import com.challengeearth.cedroid.helpers.ResourceProxyImpl;
+import com.challengeearth.cedroid.map.Map;
 import com.challengeearth.cedroid.services.UpdateService;
 
 /**
@@ -63,13 +64,9 @@ public class OverviewActivity extends BaseActivity {
     protected static final int EDIT_ENTRY_DIALOG_ID = 0;
     
     private LinearLayout mapContainer;
-	private MapView mOsmv;
-	private TilesOverlay mTilesOverlay;
-	private MapTileProviderBasic mProvider;
-	private ResourceProxyImpl mResourceProxy;
-	private MyLocationOverlay mLocationOverlay;
 	private ArrayList<OverlayItem> chalLocOverlayArray;
-	private ItemizedOverlay<OverlayItem> chalLocOverlay;
+	
+	private Map map;
 	
     /**
 	 * View Binder to load the images from the internet
@@ -113,28 +110,6 @@ public class OverviewActivity extends BaseActivity {
 		}
 	};
 	
-	
-	/**
-	 * The item gesture listener for the map
-	 */
-	final OnItemGestureListener<OverlayItem> pOnItemGestureListener = new OnItemGestureListener<OverlayItem>() {
-
-		@Override
-		public boolean onItemLongPress(int index, OverlayItem item) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean onItemSingleTapUp(int index, OverlayItem item) {
-			long c_id = Long.parseLong(item.getTitle());
-			Intent intent = new Intent(OverviewActivity.this, DetailsActivity.class);
-			intent.putExtra(ChallengeData.C_ID, c_id);
-			startActivity(intent);
-			return true;
-		}
-	};
-	
 	/**
 	 * Broadcast Receiver receives broadcasts when new Challenges are available
 	 * and updates the list
@@ -168,36 +143,9 @@ public class OverviewActivity extends BaseActivity {
 	    this.filter = new IntentFilter(UpdateService.NEW_CHALLENGES);
 
 	    // Map ----------------------
-	    CloudmadeUtil.retrieveCloudmadeKey(getApplicationContext());
-	    
-	    this.mResourceProxy = new ResourceProxyImpl(getApplicationContext());
-	    this.mapContainer = (LinearLayout)findViewById(R.id.mapContainer);
-		this.mOsmv = new MapView(this, 256, mResourceProxy);
-		
-		this.mOsmv.setBuiltInZoomControls(true);
-		this.mOsmv.setMultiTouchControls(true);
-
-		// Add tiles layer
-		mProvider = new MapTileProviderBasic(getApplicationContext());
-		mProvider.setTileSource(TileSourceFactory.CLOUDMADESTANDARDTILES);
-		this.mTilesOverlay = new TilesOverlay(mProvider, this.getBaseContext());
-		this.mOsmv.getOverlays().add(this.mTilesOverlay);
-		
-		// Prepare Challenge Overlay
-		this.chalLocOverlayArray = new ArrayList<OverlayItem>();
-		
-		// zoom to switzerland
-		this.mOsmv.getController().setZoom(7);
-		
-		this.mLocationOverlay = new MyLocationOverlay(this.getBaseContext(), this.mOsmv,
-				mResourceProxy);
-		this.mOsmv.getOverlays().add(mLocationOverlay);
-		this.mLocationOverlay.enableMyLocation();
-		this.mLocationOverlay.enableFollowLocation();
-		this.mLocationOverlay.setDrawAccuracyEnabled(true);
-	    
-		this.mapContainer.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT));
+	    mapContainer = (LinearLayout)findViewById(R.id.mapContainer);
+	    map = new Map(this, mapContainer);
+	    this.chalLocOverlayArray = new ArrayList<OverlayItem>();
 
     }
 
@@ -247,12 +195,7 @@ public class OverviewActivity extends BaseActivity {
 			this.chalLocOverlayArray.add(chal);
 			cursor.moveToNext();
 		}
-		this.mOsmv.getOverlays().remove(this.chalLocOverlay);
-		this.chalLocOverlay = new ItemizedIconOverlay<OverlayItem>(chalLocOverlayArray, 
-				getResources().getDrawable(R.drawable.pin_map), 
-				pOnItemGestureListener, 
-				mResourceProxy);
-		this.mOsmv.getOverlays().add(chalLocOverlay);
+		this.map.addChallengeOverlays(chalLocOverlayArray);
 	}
 	
 	/**
@@ -302,7 +245,7 @@ public class OverviewActivity extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		this.mLocationOverlay.disableMyLocation();
+		map.destroy();
 		challengeList = null;
 	    adapter = null;
 	    receiver = null;
