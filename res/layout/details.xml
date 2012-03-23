@@ -2,22 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background2"
     android:orientation="vertical">
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5sp"
-        android:text="@string/titleChallenge"
-        android:textColor="#8DB8D3"
-        android:textSize="24sp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:background="#88000000">
+        android:layout_height="wrap_content" 
+        android:background="#cccc">
 
         <ImageView
             android:id="@+id/detailImage"
@@ -33,7 +24,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" android:layout_gravity="center_vertical"/>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
 
@@ -41,17 +33,20 @@
         android:id="@+id/challengeDescription"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:textColor="#ddd"
         android:text="TextView" android:layout_weight="1" android:layout_margin="10dp"/>
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#72B84C"
         android:text="@string/labelProgress" android:layout_margin="10dp"/>
 
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/progress_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" android:layout_margin="10dp" android:progress="30"/>
 

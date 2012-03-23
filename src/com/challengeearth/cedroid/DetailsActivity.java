@@ -27,7 +27,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	private NewProgressListener receiver;
     private IntentFilter filter;
 	
-	TextView title;
+	TextView challengeTitle;
 	TextView description;
 	ProgressBar progress;
 	ImageButton button;
@@ -48,8 +48,10 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.details);
 		
+		this.title.setText(R.string.titleChallenge);
+		
         // Finding views
-        title = (TextView) findViewById(R.id.challengeTitle);
+        challengeTitle = (TextView) findViewById(R.id.challengeTitle);
         description = (TextView) findViewById(R.id.challengeDescription);
         progress = (ProgressBar) findViewById(R.id.progress);
         button = (ImageButton) findViewById(R.id.toggelTracking);
@@ -71,7 +73,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
         
         // Set contents
         challengeActive = this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_ACTIVE))>0;
-        title.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_TITLE)));
+        challengeTitle.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_TITLE)));
         description.setText(this.cursor.getString(this.cursor.getColumnIndex(ChallengeData.C_DESC)));
         progress.setProgress(this.cursor.getInt(this.cursor.getColumnIndex(ChallengeData.C_PROGRESS)));
 
@@ -120,7 +122,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	
 	@Override
 	protected void onDestroy() {
-		title = null;
+		challengeTitle = null;
 		description = null;
 		progress = null;
 		button = null;

@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.challengeearth.cedroid.services.UpdateService;
 
@@ -21,12 +24,17 @@ public class BaseActivity extends Activity {
 	protected ChallengeData challengeData;
 	protected SharedPreferences prefs;
 	
-	
+	protected TextView title;
+	protected ImageView icon;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        setContentView(R.layout.overview);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.window_title);
 		
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
@@ -46,6 +54,9 @@ public class BaseActivity extends Activity {
 	    }
 	    
 	    Log.d(TAG, "activities running: " + activityCount);
+	    
+	    title = (TextView) findViewById(R.id.title);
+        icon  = (ImageView) findViewById(R.id.icon);
 	}
 
 	static public boolean isUIRunning() {
@@ -98,6 +109,10 @@ public class BaseActivity extends Activity {
 		}
 		
 		challengeData = null;
+	}
+
+	protected boolean isRouteDisplayed() {
+		return true;
 	}
 
 	
